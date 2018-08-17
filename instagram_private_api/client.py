@@ -474,7 +474,7 @@ class Client(AccountsEndpointsMixin, DiscoverEndpointsMixin, FeedEndpointsMixin,
             res = response.read().decode('utf8')
         return res
 
-    def _call_api(self, endpoint, params=None, query=None, return_response=False, unsigned=False, version='v1'):
+    def _call_api(self, endpoint, params=None, query=None, return_response=False, unsigned=False, version='v1', api_url=None):
         """
         Calls the private api.
 
@@ -484,9 +484,13 @@ class Client(AccountsEndpointsMixin, DiscoverEndpointsMixin, FeedEndpointsMixin,
         :param return_response: return the response instead of the parsed json object
         :param unsigned: use post params as-is without signing
         :param version: for the versioned api base url. Default 'v1'.
+        :param api_url: for overwriting the api url (if you need to call challenge/reset etc).
         :return:
         """
-        url = '{0}{1}'.format(self.api_url.format(version=version), endpoint)
+        if api_url:
+            url = 'https://{0}/{1}'.format(api_url, endpoint)
+        else:
+            url = '{0}{1}'.format(self.api_url.format(version=version), endpoint)
         if query:
             url += ('?' if '?' not in endpoint else '&') + compat_urllib_parse.urlencode(query)
 
